@@ -6,7 +6,13 @@ from jogo_da_velha import criarBoard, fazMovimento,  getInputValido, \
 from minimax import movimentoIA
 
 pygame.font.init()
-
+font = pygame.font.SysFont("comicsans", 40)
+text = font.render("Restart", True, (0, 0, 0))
+textPoweredBy = font.render("Powered By Hamoa Tech", True, (0, 0, 0))
+button_width = text.get_width() + 20
+button_height = text.get_height() + 10
+button_x = (600 - button_width) // 2
+button_y = 650
 
 def draw_board(win, board):
     height = 600
@@ -27,13 +33,22 @@ def draw_board(win, board):
             text = font.render(board[i][j], 1, (128, 0, 0))
             win.blit(text, ((x + 75), (y + 75)))
 
+def draw_button(win):
+    pygame.draw.rect(win, (192, 192, 192), (button_x, button_y, button_width, button_height))
+    pygame.draw.rect(win, (0, 0, 0), (button_x, button_y, button_width, button_height), 3)
+    win.blit(text, (button_x + 10, button_y + 5))
+    win.blit(textPoweredBy, (button_x - 140, button_y + 70))
 
 def redraw_window(win, board):
     win.fill((255, 255, 255))
     draw_board(win, board)
+    draw_button(win)
+
+def restart_game():
+    main()
 
 def main():
-    win = pygame.display.set_mode((600, 600))
+    win = pygame.display.set_mode((600, 800))
     pygame.display.set_caption("Jogo Da Velha")
 
     board = criarBoard()
@@ -50,6 +65,13 @@ def main():
             jogou = False
             while(not jogou):
                 for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        pos = pygame.mouse.get_pos()
+                        button_x = (600 - button_width) // 2
+                        button_y = 650
+                        print('chamou aqui')
+                        if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:
+                            return restart_game()
                     if(event.type == pygame.QUIT):
                         return
                     elif(event.type == pygame.MOUSEBUTTONUP):
@@ -68,9 +90,20 @@ def main():
         redraw_window(win, board)
         pygame.display.update()
 
-    while(True):
+    while True:
         for event in pygame.event.get():
-            if(event.type == pygame.QUIT):
+            if event.type == pygame.QUIT:
+                pygame.quit()
                 return
+            elif event.type == pygame.MOUSEBUTTONUP:
+                pos = pygame.mouse.get_pos()
+                button_x = (600 - button_width) // 2
+                button_y = 650
+                print('chamou aqui')
+                if button_x <= pos[0] <= button_x + button_width and button_y <= pos[1] <= button_y + button_height:
+                    restart_game()
+            else:
+                continue
+            break
 
 main()
